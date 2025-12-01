@@ -1,0 +1,21 @@
+train: ../data/processed/images
+val: ../data/processed/images
+
+nc: 16
+names:
+  - Sugar Box
+  - Tomato Soup Can
+  - Mustard Bottle
+  - Pudding Box
+  - Potted Meat Can
+  - Banana
+  - Apple
+  - Lemon
+  - Pear
+  - Orange
+  - Windex Bottle
+  - Bowl
+  - Sponge
+  - Plate
+  - Large Marker
+  - A Cups

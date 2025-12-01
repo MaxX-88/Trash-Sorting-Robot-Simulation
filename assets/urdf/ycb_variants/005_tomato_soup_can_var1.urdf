@@ -1,0 +1,22 @@
+<robot name="005_tomato_soup_can">
+	<link name="_name">
+		<visual>
+			<origin xyz="0.09342099371394881 -0.8422424437662781 -0.5002583293554274" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="ycb/005_tomato_soup_can/google_16k/textured.obj" scale="10.177645928272167 10.130037541523901 10.27918359907286" />
+			</geometry>
+			<material name="texture">
+				<color rgba="0.39953116478652306 0.48186290227731354 0.7676723455073791 1.0" />
+			</material>
+		</visual>
+		<collision>
+			<geometry>
+				<mesh filename="ycb/005_tomato_soup_can/google_16k/textured_vhacd.obj" scale="9.676979279864307 9.98831116608408 10.376824762079599" />
+			</geometry>
+		<origin xyz="0.09342099371394881 -0.8422424437662781 -0.5002583293554274" rpy="0 0 0" /></collision>
+		<inertial>
+			<mass value="1.0" />
+			<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+		</inertial>
+	</link>
+</robot>

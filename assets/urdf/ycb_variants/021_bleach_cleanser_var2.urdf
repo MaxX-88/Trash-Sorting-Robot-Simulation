@@ -1,0 +1,22 @@
+<robot name="021_bleach_cleanser">
+	<link name="_name">
+		<visual>
+			<origin xyz="0.17138949272641096 -0.11574369859748879 -0.9969796254743377" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="ycb/021_bleach_cleanser/google_16k/textured.obj" scale="9.48082568685266 9.631693576263165 9.451394401500659" />
+			</geometry>
+			<material name="texture">
+				<color rgba="0.0008750421245135032 0.5339565933407396 0.1473832548996883 1.0" />
+			</material>
+		</visual>
+		<collision>
+			<geometry>
+				<mesh filename="ycb/021_bleach_cleanser/google_16k/textured_vhacd.obj" scale="10.14456319930967 9.735020413272157 9.626623532291536" />
+			</geometry>
+		<origin xyz="0.17138949272641096 -0.11574369859748879 -0.9969796254743377" rpy="0 0 0" /></collision>
+		<inertial>
+			<mass value="1.0" />
+			<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+		</inertial>
+	</link>
+</robot>

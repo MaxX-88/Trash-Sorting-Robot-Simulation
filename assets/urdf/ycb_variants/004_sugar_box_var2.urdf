@@ -1,0 +1,22 @@
+<robot name="004_sugar_box">
+	<link name="_name">
+		<visual>
+			<origin xyz="0.07698415494577894 0.1707816316229452 -0.8602381422432335" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="ycb/004_sugar_box/google_16k/textured.obj" scale="9.67364986828693 10.365187104751545 9.286034460337069" />
+			</geometry>
+			<material name="texture">
+				<color rgba="0.6945201805288345 0.3004001872868419 0.9832962441509724 1.0" />
+			</material>
+		</visual>
+		<collision>
+			<geometry>
+				<mesh filename="ycb/004_sugar_box/google_16k/textured_vhacd.obj" scale="10.082548215442717 9.742836507537037 10.843575933409323" />
+			</geometry>
+		<origin xyz="0.07698415494577894 0.1707816316229452 -0.8602381422432335" rpy="0 0 0" /></collision>
+		<inertial>
+			<mass value="1.0" />
+			<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+		</inertial>
+	</link>
+</robot>
