@@ -63,6 +63,10 @@ tests/            # Test scripts for simulation and models
    pip install -r requirements.txt
    ```
 
+3. **Recommendations:**
+- Use miniconda/anaconda for managing dependencies
+- Install pybullet with conda-forge if normal installation fails
+
 
 ## Usage
 
