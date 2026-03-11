@@ -71,3 +71,6 @@ coverage.xml
 
 # Virtual environments
 .venv/
+
+videos/*
+configurable_arms_vids/*
