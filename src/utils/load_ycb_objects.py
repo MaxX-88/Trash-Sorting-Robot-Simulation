@@ -28,8 +28,7 @@ print(f"Current working directory: {os.getcwd()}")
 print(f"YCB_ASSETS_PATH: {YCB_ASSETS_PATH}")
 print(f"YCB_VARIANTS_PATH: {YCB_VARIANTS_PATH}")
 
-# --- config: choose which set to load ---
-LOAD_VARIANTS = True  # set to true to load variants, false for originals, idk why if we set both for additional search path it just wont load anything
+LOAD_VARIANTS = True
 
 # only add the search path for the set being loaded
 if LOAD_VARIANTS:

@@ -8,7 +8,7 @@ from glob import glob
 
 # --- CONFIG ---
 URDF_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../assets/urdf/ycb'))
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '../data/synthetic')
+OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '../dataset/synthetic')
 IMG_DIR = os.path.join(OUTPUT_DIR, 'images')
 LBL_DIR = os.path.join(OUTPUT_DIR, 'labels')
 CLASSES_FILE = os.path.join(OUTPUT_DIR, 'classes.txt')

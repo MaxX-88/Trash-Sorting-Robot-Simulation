@@ -6,7 +6,6 @@ import time
 import os
 from math import radians
 
-# ----- camera class -----
 class TopDownCamera:
     def __init__(self, img_width, img_height, camera_position, floor_plane_size):
         self._img_width = img_width
@@ -59,7 +58,6 @@ class TopDownCamera:
 
         return pixel_x, pixel_y
 
-# ----- PyBullet Setup -----
 p.connect(p.DIRECT)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
 p.setGravity(0, 0, -9.8)
@@ -67,7 +65,7 @@ p.setGravity(0, 0, -9.8)
 plane_id = p.loadURDF("plane.urdf", basePosition=[0, 0, -1.0])
 
 
-# Conveyor belt
+# conveyor belt
 belt_length, belt_width, belt_height = 5, 1, 0.02
 belt_pos = [-0.3, 0, belt_height / 2]
 belt_col = p.createCollisionShape(p.GEOM_BOX, halfExtents=[belt_length/2, belt_width/2, belt_height/2])
@@ -94,26 +92,26 @@ set_color(bin_trash, black)
 
 
 
-# Overhead camera
+# overhead camera
 camera = TopDownCamera(img_width=512, img_height=512, camera_position=[0, 0, 3], floor_plane_size=1)
 CAMERA_POS = [0, 0, 3]  # position, topdown
 CAMERA_TARGET = [0, 0, 0]  # lookat
 CAMERA_UP = [0, 10, 0]
-FOV = 60  # in degrees
-NEAR, FAR = 0.1, 100.0  # Near and far clipping planes for the camera
+FOV = 60  # degrees
+NEAR, FAR = 0.1, 100.0  # clipping planes
 IMG_WIDTH = 512
-IMG_HEIGHT=512
+IMG_HEIGHT = 512
 
 
 
-#load objects
-#all cans, bottles, and cups need to have roll adjusted to lie flat on belt
+# load objects
+# cans bottles cups need roll adjusted to lie flat
 pitch_adjust_list = [
     "assets/urdf/ycb/002_master_chef_can.urdf", "assets/urdf/ycb/003_cracker_box.urdf", "assets/urdf/ycb/004_sugar_box.urdf", "assets/urdf/ycb/005_tomato_soup_can.urdf", "assets/urdf/ycb/006_mustard_bottle.urdf", "assets/urdf/ycb/007_tuna_fish_can.urdf", "assets/urdf/ycb/010_potted_meat_can.urdf", "assets/urdf/ycb/021_bleach_cleanser.urdf", "assets/urdf/ycb/022_windex_bottle.urdf", "assets/urdf/ycb/065-a_cups.urdf", "assets/urdf/ycb/065-b_cups.urdf", "assets/urdf/ycb/065-c_cups.urdf", "assets/urdf/ycb/065-d_cups.urdf", "assets/urdf/ycb/065-e_cups.urdf", "assets/urdf/ycb/065-f_cups.urdf", "assets/urdf/ycb/065-g_cups.urdf", "assets/urdf/ycb/065-h_cups.urdf", "assets/urdf/ycb/065-i_cups.urdf", "assets/urdf/ycb/065-j_cups.urdf"
 ]
 urdf_dir = "assets/urdf/ycb"
-image_dir = "data/processed/images"
-label_dir = "data/processed/labels"
+image_dir = "dataset/processed/images"
+label_dir = "dataset/processed/labels"
 
 class_id = 0
 for i, file in enumerate(os.listdir(urdf_dir)):
@@ -125,30 +123,30 @@ for i, file in enumerate(os.listdir(urdf_dir)):
         continue
     for j in range(30):
         if path in pitch_adjust_list:
-            rotation = [0,-90,12*j]
+            rotation = [0, -90, 12*j]
         else:
-            rotation = [0,0,12*j]
+            rotation = [0, 0, 12*j]
         quaternion = p.getQuaternionFromEuler([radians(x) for x in rotation])
-        object_id=p.loadURDF(path, basePosition=[0,0,1], baseOrientation=quaternion, globalScaling=0.25)
+        object_id = p.loadURDF(path, basePosition=[0, 0, 1], baseOrientation=quaternion, globalScaling=0.25)
         for _ in range(120):
             p.stepSimulation()
-            #comment out time.sleep for actual generation
-            #time.sleep(1/240)
+            # comment out time.sleep for actual generation
+            # time.sleep(1/240)
 
         img = camera.get_image()
         img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
         base = os.path.splitext(os.path.basename(file))[0]
-        img_name= base + f"{j}.jpeg"
+        img_name = base + f"{j}.jpeg"
         img_path = os.path.join(image_dir, img_name)
         cv2.imwrite(img_path, img_bgr)
 
         label = []
         aabb_min, aabb_max = p.getAABB(object_id)
         top_corners = [
-        [aabb_max[0], aabb_min[1], aabb_max[2]],  # Bottom-left of 2d camera
-        [aabb_min[0], aabb_min[1], aabb_max[2]],  # Top-left of 2d camera
-        [aabb_max[0], aabb_max[1], aabb_max[2]],  # Bottom-right of 2d camera
-        [aabb_min[0], aabb_max[1], aabb_max[2]]   # Top-right of 2d camera
+        [aabb_max[0], aabb_min[1], aabb_max[2]],  # bottom-left
+        [aabb_min[0], aabb_min[1], aabb_max[2]],  # top-left
+        [aabb_max[0], aabb_max[1], aabb_max[2]],  # bottom-right
+        [aabb_min[0], aabb_max[1], aabb_max[2]]   # top-right
         ]
        
         pixels = [camera.get_pixel_coords(x, y) for x, y, z in top_corners]
@@ -196,7 +194,7 @@ for i, file in enumerate(os.listdir(urdf_dir)):
         label.extend(map(str, [class_id, yolo_horizontal_center, yolo_vertical_center, yolo_width, yolo_height]))
 
 
-        label_name = base+f"{j}.txt"
+        label_name = base + f"{j}.txt"
         label_path = os.path.join(label_dir, label_name)
         with open(label_path, 'w') as f:
             f.write(" ".join(label) + "\n")
@@ -208,11 +206,11 @@ for i, file in enumerate(os.listdir(urdf_dir)):
     class_id += 1
 
 while True:
-    # Get camera image and display it
+    # get camera image and display
     img = camera.get_image()
     cv2.imshow("Camera View", cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
     cv2.waitKey(1)
     
-    # Step simulation
+    # step sim
     p.stepSimulation()
     time.sleep(1./240.)

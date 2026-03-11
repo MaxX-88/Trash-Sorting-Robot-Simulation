@@ -3,7 +3,7 @@ from ultralytics import YOLO
 
 
 MODEL_PATH = "models/trash_detector/weights/new_best_model.pt"
-IMAGE_PATH = "/Users/maxxie/Desktop/robotics-project/data/processed/images/004_sugar_box0.jpeg"  # path to the image you want to test
+IMAGE_PATH = "dataset/processed/images/004_sugar_box0.jpeg"  # path to the image you want to test
 
 
 model = YOLO(MODEL_PATH)

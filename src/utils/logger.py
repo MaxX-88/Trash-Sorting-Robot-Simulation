@@ -20,12 +20,12 @@ def get_logger(name=__name__):
     console_handler.setFormatter(log_formatter)
     logger.addHandler(console_handler)
 
-    # File handler with rotation (5MB per file, keep 1 backup)
+    # rotational files
     file_handler = RotatingFileHandler(log_path, maxBytes=5*1024*1024, backupCount=1)
     file_handler.setFormatter(log_formatter)
     logger.addHandler(file_handler)
 
-    # Ensure logs are flushed and closed on exit
+    # flush logs
     atexit.register(logging.shutdown)
     logger._custom_configured = True
     return logger 

@@ -8,15 +8,7 @@ def create_video_from_frames(frames_dir, output_video_path, fps=60, frame_patter
     """
     Create a video from a directory of frames.
     
-    Args:
-        frames_dir (str): Directory containing the frame images
-        output_video_path (str): Path where the output video will be saved
-        fps (int): Frames per second for the output video
-        frame_pattern (str): Pattern to match frame files (e.g., "frame_*.jpg")
-    
-    Returns:
-        bool: True if video was created successfully, False otherwise
-    """
+   """
     # Get all frame files matching the pattern
     frame_files = glob.glob(os.path.join(frames_dir, frame_pattern))
     
@@ -24,7 +16,7 @@ def create_video_from_frames(frames_dir, output_video_path, fps=60, frame_patter
         print(f"No frames found in {frames_dir} with pattern {frame_pattern}")
         return False
     
-    # Sort files numerically (assuming they have frame numbers)
+    # Sort files
     frame_files.sort(key=lambda x: int(os.path.basename(x).split('_')[1].split('.')[0]))
     
     # Read the first frame to get dimensions
@@ -35,10 +27,8 @@ def create_video_from_frames(frames_dir, output_video_path, fps=60, frame_patter
     
     height, width, channels = first_frame.shape
     
-    # Create output directory if it doesn't exist
     os.makedirs(os.path.dirname(output_video_path), exist_ok=True)
     
-    # Define the codec and create VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(output_video_path, fourcc, fps, (width, height))
     
@@ -46,7 +36,7 @@ def create_video_from_frames(frames_dir, output_video_path, fps=60, frame_patter
     print(f"Output: {output_video_path}")
     print(f"Resolution: {width}x{height}, FPS: {fps}")
     
-    # Write each frame to the video
+    # save frame to vid
     for i, frame_file in enumerate(frame_files):
         frame = cv2.imread(frame_file)
         if frame is not None:
@@ -62,18 +52,7 @@ def create_video_from_frames(frames_dir, output_video_path, fps=60, frame_patter
     return True
 
 def create_videos_from_simulation(project_root, fps=30, config=None):
-    """
-    Create videos from enabled camera frames.
-    Creates a new Run folder for each simulation run.
-    
-    Args:
-        project_root (str): Root directory of the project
-        fps (int): Frames per second for output videos
-        config: Configuration object with camera enable flags
-    
-    Returns:
-        dict: Dictionary with camera names as keys and video paths as values
-    """
+    #creates vids
     frames_base_dir = os.path.join(project_root, "frames")
     videos_base_dir = os.path.join(project_root, "videos")
     
@@ -86,7 +65,7 @@ def create_videos_from_simulation(project_root, fps=30, config=None):
     run_dir = os.path.join(videos_base_dir, f"Run{run_number}")
     os.makedirs(run_dir, exist_ok=True)
     
-    print(f"Creating videos for Run{run_number}...")
+    print(f"Creating vid for Run{run_number}...")
     
     # Determine which cameras are enabled
     cameras = []
@@ -112,12 +91,7 @@ def create_videos_from_simulation(project_root, fps=30, config=None):
     return created_videos
 
 def cleanup_frames(project_root):
-    """
-    Clean up frame directories after video creation.
-    
-    Args:
-        project_root (str): Root directory of the project
-    """
+   #cleans up frame directories
     frames_base_dir = os.path.join(project_root, "frames")
     cameras = ["perspective", "top", "detection"]
     
@@ -134,7 +108,7 @@ if __name__ == "__main__":
     import sys
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     
-    print("Creating videos from simulation frames...")
+    print("Creating videos.")
     videos = create_videos_from_simulation(project_root, fps=30)
     
     if videos:
@@ -142,4 +116,4 @@ if __name__ == "__main__":
         for camera, video_path in videos.items():
             print(f"  {camera}: {video_path}")
     else:
-        print("No videos were created. Make sure frames exist in the frames directory.")
+        print("frames might not exist")

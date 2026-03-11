@@ -1,5 +1,5 @@
-train: ../data/processed/images
-val: ../data/processed/images
+train: processed/images
+val: processed/images
 
 nc: 16
 names:

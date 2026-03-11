@@ -2,7 +2,6 @@ import numpy as np
 import pybullet as p
 import math
 
-# ----- Camera Class -----
 class TopDownCamera:
     def __init__(self, img_width, img_height, camera_position, floor_plane_size, target_position=None):
         self._img_width = img_width
@@ -43,9 +42,7 @@ class TopDownCamera:
             projectionMatrix=self._projection_matrix
         )
         
-        # Handle case where getCameraImage returns None
         if img_arr is None:
-            # Return a black image as fallback
             return np.zeros((self._img_height, self._img_width, 3), dtype=np.uint8)
         
         rgba = np.reshape(np.array(img_arr[2], dtype=np.uint8), (self._img_height, self._img_width, 4))
@@ -56,8 +53,7 @@ class TopDownCamera:
         v = 1.0 - (pixel_y / self._img_height)
         world_y = (u * self._floor_plane_size) - self._floor_plane_size / 2
         world_x = -(v * self._floor_plane_size - self._floor_plane_size / 2)
-        #world_z = img_arr[3]
-        return [world_x, world_y] 
+        return [world_x, world_y]
 
 class PerspectiveCamera:
     def __init__(self, img_width, img_height, camera_position, floor_plane_size, yaw=90, pitch=-60, roll=30, fov=60, target_position=None):
@@ -69,14 +65,12 @@ class PerspectiveCamera:
         self._fov = fov
 
         if target_position is not None:
-            # Use explicit target position if provided
             self._view_matrix = p.computeViewMatrix(
                 cameraEyePosition=camera_position,
                 cameraTargetPosition=target_position,
                 cameraUpVector=[0, 0, 1]
             )
         else:
-            # Calculate target position based on camera position and angles
             target_position = self._calculate_target_from_angles()
             self._view_matrix = p.computeViewMatrix(
                 cameraEyePosition=camera_position,
@@ -90,19 +84,14 @@ class PerspectiveCamera:
     
     def _calculate_target_from_angles(self, look_distance=5.0):
         """
-        calculate where camera should look based on yaw/pitch/roll
+        calc where cam should look based on yaw/pitch
         """
-        # Convert angles to radians
         yaw_rad = math.radians(self._yaw)
         pitch_rad = math.radians(self._pitch)
         
-        # Calculate the direction vector from the camera
-        # Standard camera coordinate system:
-        # - Positive yaw rotates left (counter-clockwise when viewed from above)
-        # - Positive pitch tilts up
-        # - We look in the negative Z direction by default
+        # direction vector from angles
+        # positive yaw = rotate left, pitch = tilt up
         
-        # Calculate target position
         target_x = self._camera_position[0] + look_distance * math.cos(pitch_rad) * math.cos(yaw_rad)
         target_y = self._camera_position[1] + look_distance * math.cos(pitch_rad) * math.sin(yaw_rad)
         target_z = self._camera_position[2] + look_distance * math.sin(pitch_rad)
@@ -117,11 +106,8 @@ class PerspectiveCamera:
             projectionMatrix=self._projection_matrix
         )
         
-        # Handle case where getCameraImage returns None
         if img_arr is None:
-            # Return a black image as fallback
             return np.zeros((self._img_height, self._img_width, 3), dtype=np.uint8)
         
         rgba = np.reshape(np.array(img_arr[2], dtype=np.uint8), (self._img_height, self._img_width, 4))
         return rgba[:, :, :3], img_arr
-
