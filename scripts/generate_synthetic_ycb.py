@@ -17,12 +17,12 @@ NUM_IMAGES = 1000  # number of synthetic images to generate
 OBJECTS_PER_SCENE = (1, 3)  # min, max objects per scene
 IMG_WIDTH, IMG_HEIGHT = 640, 480 # dimensions
 
-# Camera parameters (top-down)
-CAMERA_POS = [0, 0, 2]  # position, topdown
+# Camera params
+CAMERA_POS = [0, 0, 2]  # topdown cam pos
 CAMERA_TARGET = [0, 0, 0]  # lookat
 CAMERA_UP = [0, 10, 0]
-FOV = 60  # in degrees
-NEAR, FAR = 0.1, 100.0  # Near and far clipping planes for the camera
+FOV = 60 
+NEAR, FAR = 0.1, 100.0  # Near and far clipping planes
 
 # --- UTILS ---
 def get_urdf_objects(urdf_dir):
@@ -39,7 +39,7 @@ def save_classes(class_names):
         for name in class_names:
             f.write(f"{name}\n")
 
-# --- MAIN GENERATION LOOP ---
+#generation loop
 def main():
     ensure_dirs()
     urdf_files, class_names = get_urdf_objects(URDF_DIR)
@@ -61,7 +61,7 @@ def main():
             idx = random.randint(0, len(urdf_files)-1)
             urdf = urdf_files[idx]
             class_id = idx
-            pos = [random.uniform(-0.1, 0.1), random.uniform(-0.1, 0.1), 0.2]  # raised z
+            pos = [random.uniform(-0.1, 0.1), random.uniform(-0.1, 0.1), 0.2]
             orn = p.getQuaternionFromEuler([0, 0, random.uniform(0, 2*np.pi)])
             obj_id = p.loadURDF(urdf, pos, orn, useFixedBase=False)
             objs.append(obj_id)
@@ -73,7 +73,7 @@ def main():
             print(f"Object {obj_id} position: {base_pos}, orientation: {base_orn}")
         
         # Let objects settle
-        for _ in range(100):  # add more steps for settling
+        for _ in range(100):
             p.stepSimulation()
         
         # Camera setup
@@ -87,7 +87,7 @@ def main():
         img_path = os.path.join(IMG_DIR, f"img_{i:05d}.png")
         cv2.imwrite(img_path, cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR))
         
-        # Prepare YOLO label using 3D AABB projected to 2D
+        # Project 3d aabb to 2d yolo
         label_lines = []
         for obj_id, class_id, urdf in obj_infos:
             aabb_min, aabb_max = p.getAABB(obj_id)
@@ -120,16 +120,15 @@ def main():
             x_max = max(0, min(IMG_WIDTH-1, x_max))
             y_min = max(0, min(IMG_HEIGHT-1, y_min))
             y_max = max(0, min(IMG_HEIGHT-1, y_max))
-            # Skip if not visible
             if x_max <= x_min or y_max <= y_min:
                 continue
-            # YOLO format
+            # yolo format
             x_center = (x_min + x_max) / 2 / IMG_WIDTH
             y_center = (y_min + y_max) / 2 / IMG_HEIGHT
             w = (x_max - x_min) / IMG_WIDTH
             h = (y_max - y_min) / IMG_HEIGHT
             label_lines.append(f"{class_id} {x_center:.6f} {y_center:.6f} {w:.6f} {h:.6f}")
-        # Save label file only if there are objects
+        # save label file only if there are objects
         label_path = os.path.join(LBL_DIR, f"img_{i:05d}.txt")
         with open(label_path, 'w') as f:
             f.write('\n'.join(label_lines))

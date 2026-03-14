@@ -11,7 +11,7 @@ class SimConfig:
     config for sim environment and robot stuff
     """
     # physics
-    gravity: float = -30   # gravity lol
+    gravity: float = -30   # gravity (increased for accurate drop)
     simulation_fps: float = 40  # hz
 
     # conveyor belt
@@ -60,11 +60,11 @@ class SimConfig:
     detection_line_x: float = -1.0
     confidence_threshold: float = 0.5
     arm_lead_time: float = 1.0
-    arm_above_offset: float = 0.3  # TODO use depth camera for this later
+    arm_above_offset: float = 0.3  # now uses depth camera
     arm_lift_height: float = 1.5
     arm_threshold: float = 0.14
     arm_reset_threshold: float = 0.6
-    arm_pause_before_drop: float = 0.5  # seconds to hold at drop position before release (prevents launching)
+    arm_pause_before_drop: float = 0.5  # wait before drop to prevent launching
     arm_base_position: list = field(default_factory=lambda: [0, 0.6, 2])
     
     # bins
@@ -88,10 +88,10 @@ class SimConfig:
     # detection cam - lower res for speed
     detection_img_width: int = 512
     detection_img_height: int = 512
-    # perspective cam - higher res for nicer output
+    # perspective cam - higher res for nicer looks
     perspective_img_width: int = 1024
     perspective_img_height: int = 1024
-    # top cam
+    # top cam - lower res for speed
     top_img_width: int = 512
     top_img_height: int = 512
     # legacy stuff for main.py backwards compat
@@ -110,12 +110,13 @@ class SimConfig:
     pitch_adjust_list: list = field(default_factory=lambda: [
         "002_master_chef_can.urdf", "003_cracker_box.urdf", "004_sugar_box.urdf", "005_tomato_soup_can.urdf", "006_mustard_bottle.urdf", "007_tuna_fish_can.urdf", "010_potted_meat_can.urdf", "021_bleach_cleanser.urdf", "022_windex_bottle.urdf", "065-a_cups.urdf", "065-b_cups.urdf", "065-c_cups.urdf", "065-d_cups.urdf", "065-e_cups.urdf", "065-f_cups.urdf", "065-g_cups.urdf", "065-h_cups.urdf", "065-i_cups.urdf", "065-j_cups.urdf"
     ])
+    # recycling
     recycling_classes: list = field(default_factory=lambda: [
         "Master Chef Can",
         "Cracker Box",
         "Sugar Box",
         "Tomato Soup Can",
-        "Mustard Bottle",
+        #"Mustard Bottle",
         "Tuna Fish Can",
         "Pudding Box",
         "Gelatin Box",
@@ -146,7 +147,7 @@ class SimConfig:
         "003_cracker_box.urdf",        
         "004_sugar_box.urdf",          
         "005_tomato_soup_can.urdf",    
-        "006_mustard_bottle.urdf",  
+        #"006_mustard_bottle.urdf",  
         "007_tuna_fish_can.urdf",    
         "008_pudding_box.urdf",      
         "009_gelatin_box.urdf",        
@@ -172,15 +173,16 @@ class SimConfig:
     ])
     
     # viz
-    enable_shadows: bool = False  # shadows off for perf
+    enable_shadows: bool = False  # shadows off for performance
     enable_gui: bool = False
     enable_top_camera: bool = True
     enable_perspective_frames: bool = True
     enable_detection_frames: bool = True
     
-    # testing flags - toggle these for debugging
+    # testing flags
     spawn_only_recyclables: bool = False
-    spawn_only_trash: bool = True
+    spawn_only_trash: bool = False
+    spawn_exclude_urdf_files: list = field(default_factory=lambda: ["006_mustard_bottle.urdf", "021_bleach_cleanser.urdf", "022_windex_bottle.urdf"])
     
     # logging
     enable_frame_logging: bool = True

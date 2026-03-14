@@ -27,7 +27,16 @@ class ObjectLoader:
         urdf_files += [os.path.join(ycb_dir, f) for f in os.listdir(ycb_dir) if f.endswith('.urdf')]
         if os.path.exists(variant_dir) and self.config.enable_variants:
             urdf_files += [os.path.join(variant_dir, f) for f in os.listdir(variant_dir) if f.endswith('.urdf')]
-        
+        # exclude specific objects from spawning (base + variants)
+        exclude = getattr(self.config, 'spawn_exclude_urdf_files', [])
+        if exclude:
+            exclude_stems = [e.replace('.urdf', '') for e in exclude]
+            urdf_files = [
+                f for f in urdf_files
+                if os.path.basename(f) not in exclude
+                and not any(stem in os.path.basename(f) for stem in exclude_stems)
+            ]
+
         # filter to recyclables only if flag set
         if self.config.spawn_only_recyclables:
             recyclable_paths = []
@@ -53,7 +62,7 @@ class ObjectLoader:
         
         is_trash = urdf_basename in self.config.trash_urdf_files
         
-        # get name from urdf filename (strip prefix)
+        # get name from urdf filename
         object_name = urdf_basename.replace('.urdf', '')
         if '_' in object_name:
             object_name = '_'.join(object_name.split('_')[1:])
@@ -72,7 +81,7 @@ class ObjectLoader:
         self.object_id = p.loadURDF(random_urdf_file, basePosition=object_start_pos, baseOrientation=quaternion, globalScaling=self.config.object_scale)
         p.resetBaseVelocity(self.object_id, linearVelocity=[self.config.belt_velocity, 0, 0])
         
-        # damping - prevent bouncing
+        # damping to prevent bouncing
         p.changeDynamics(self.object_id, -1, lateralFriction=self.config.object_lateral_friction, restitution=self.config.object_restitution, linearDamping=self.config.object_linear_damping, angularDamping=self.config.object_angular_damping)
         
         self.last_object_info = {

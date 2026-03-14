@@ -2,6 +2,7 @@ import cv2
 from ultralytics import YOLO
 
 
+
 MODEL_PATH = "models/trash_detector/weights/new_best_model.pt"
 IMAGE_PATH = "dataset/processed/images/004_sugar_box0.jpeg"  # path to the image you want to test
 
@@ -16,10 +17,11 @@ if image is None:
 
 display_image = image.copy()
 
-
+#inference
 results = model.predict(source=image, conf=0.25, save=False)
 
 
+#draws rectangles around detected objects
 for box in results[0].boxes:
     x1, y1, x2, y2 = map(int, box.xyxy[0])
     conf = box.conf[0]

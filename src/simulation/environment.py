@@ -140,7 +140,7 @@ class SimulationEnvironment:
         )
         self.top_camera = PerspectiveCamera(self.config.top_img_width, self.config.top_img_height, self.config.top_camera_position, self.config.floor_plane_size, yaw=90, pitch=-90, roll=0, fov=75)
         
-        # debug line - where perspective cam looks
+        # debug line to see where perspective cam looks
         perspective_target = self.perspective_camera._calculate_target_from_angles()
         p.addUserDebugLine(self.config.perspective_camera_position, perspective_target, [1,0,0], lineWidth=5, lifeTime=0)
     

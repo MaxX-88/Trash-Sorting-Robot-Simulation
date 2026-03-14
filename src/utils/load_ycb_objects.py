@@ -23,7 +23,6 @@ p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
 YCB_ASSETS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../assets/urdf/ycb'))
 YCB_VARIANTS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../assets/urdf/ycb_variants'))
 
-# debug: print working directory and search paths
 print(f"Current working directory: {os.getcwd()}")
 print(f"YCB_ASSETS_PATH: {YCB_ASSETS_PATH}")
 print(f"YCB_VARIANTS_PATH: {YCB_VARIANTS_PATH}")
@@ -60,7 +59,7 @@ else:
     for urdf_name, pos, orn in objects_to_load:
         load_ycb_object(urdf_name, pos, orn)
 
-# Keep the simulation running
+# Keep sim running
 while True:
     p.stepSimulation()
     time.sleep(control_dt) 

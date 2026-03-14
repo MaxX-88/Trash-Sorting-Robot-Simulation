@@ -5,10 +5,7 @@ import numpy as np
 from pathlib import Path
 
 def create_video_from_frames(frames_dir, output_video_path, fps=60, frame_pattern="frame_*.jpg"):
-    """
-    Create a video from a directory of frames.
-    
-   """
+    #creates vid from frames
     # Get all frame files matching the pattern
     frame_files = glob.glob(os.path.join(frames_dir, frame_pattern))
     
@@ -19,7 +16,7 @@ def create_video_from_frames(frames_dir, output_video_path, fps=60, frame_patter
     # Sort files
     frame_files.sort(key=lambda x: int(os.path.basename(x).split('_')[1].split('.')[0]))
     
-    # Read the first frame to get dimensions
+    # finds dimensions from first frame
     first_frame = cv2.imread(frame_files[0])
     if first_frame is None:
         print(f"Could not read first frame: {frame_files[0]}")
@@ -56,18 +53,18 @@ def create_videos_from_simulation(project_root, fps=30, config=None):
     frames_base_dir = os.path.join(project_root, "frames")
     videos_base_dir = os.path.join(project_root, "videos")
     
-    # Find the next run number
+    # find next run number for naming
     run_number = 1
     while os.path.exists(os.path.join(videos_base_dir, f"Run{run_number}")):
         run_number += 1
     
-    # Create the run-specific directory
+    # Create dir if doesnt exist
     run_dir = os.path.join(videos_base_dir, f"Run{run_number}")
     os.makedirs(run_dir, exist_ok=True)
     
     print(f"Creating vid for Run{run_number}...")
     
-    # Determine which cameras are enabled
+    # Determine which cameras were enabled
     cameras = []
     if config is None or getattr(config, 'enable_perspective_frames', True):
         cameras.append("perspective")
@@ -104,7 +101,7 @@ def cleanup_frames(project_root):
             print(f"Cleaned up {len(frame_files)} frames from {camera} camera")
 
 if __name__ == "__main__":
-    # Test the video generator
+    # test generator
     import sys
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     

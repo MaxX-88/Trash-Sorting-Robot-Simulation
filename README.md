@@ -1,96 +1,102 @@
 # Trash Sorting Robot Simulation
 
-This project demonstrates a robotics simulation that combines computer vision and robot control using PyBullet. It includes synthetic data generation, a sophisticated robot control system, a virtual environment, and a trash detection model using YOLO.
+PyBullet simulation with computer vision and multi-arm robot control. YOLO detects objects on a conveyor belt; configurable Kuka arms pick trash and drop it in a recycling bin.
 
-## Project Overview
+## Overview
 
-- **Simulation**: A robotic arm interacts with multiple objects on a conveyor belt in a virtual PyBullet environment. The system supports spawning, tracking, and managing several objects at once.
-- **Synthetic Data Generation**: Scripts to generate labeled images using YCB object models for training detection models.
-  - Can generate your own synthetic data for other purposes
-- **Computer Vision**: Uses a YOLO model to detect objects for robotic manipulation.
-  - The system predicts when an object will reach the pickup point and commands the arm to intercept and grasp it using a simulated suction gripper.
-  - Scripts to train your own custom YOLO model
-- **URDF Support**: Loads and manipulates YCB and custom URDF objects for simulation and dataset creation.
-- **Robot Control System**: Modular, extensible framework using PyBullet for simulation and a finite state machine (FSM) for high-level logic. All simulation parameters (object spawn interval, pitch adjust list, recycling/trash classes, etc.) are centralized in a `SimConfig` class for easy customization.
-  - Inverse Kinematics (IK):
-    - Inverse kinematics to move the end-effector to target positions.
-    - Helper functions to abstract motion control.
-  - Debug GUI:
-    - Real-time sliders and overlays to tune parameters and visualization of the FSM state.
+- **Multi-arm simulation**: Configurable number of Kuka arms along a conveyor. Belt length and camera positions scale with arm count.
+- **Computer vision**: YOLO detects objects. Runs at configurable intervals for speed (e.g. every 5 frames).
+- **Synthetic data**: Scripts to generate labeled images with YCB objects for training.
+- **URDF support**: YCB and custom URDFs for simulation and dataset creation.
+- **Robot control**: FSM-based logic, IK for end-effector motion, debug GUI with sliders. All parameters in `SimConfig` (`src/simulation/config.py`).
 
 ## Project Structure
 
 ```
-assets/           # URDFs and 3D models (YCB, variants, trash bin, etc.)
-data/             # Datasets, processed images/labels, class lists
+assets/           # URDFs and 3D models (YCB, variants, trash bin)
+data/             # Datasets, processed images, class lists
 models/           # Model weights and training scripts
 output/           # Generated images, run outputs
-scripts/          # Data generation, model testing, and utility scripts
-src/              # Main source code (simulation, control, utils)
-tests/            # Test scripts for simulation and models
+scripts/          # Data generation, model testing, utilities
+src/              # Simulation, control, utils
+tests/            # Simulation and model tests
 ```
 
 ## Main Components
 
-- `src/main.py`: Main entry point. Runs the full simulation with vision and robot control. Handles object spawning, tracking, and logic for distinguishing recycling vs. trash objects.
-- `src/utils/`: Camera, debug GUI, PyBullet helpers, and YCB object loading utilities.
-- `src/simulation/`: Conveyor and trash bin simulation modules.
-- `scripts/generate_synthetic_ycb.py`: Generate synthetic datasets with random YCB objects.
-- `scripts/generate_dataset.py`: Additional dataset generation utilities.
-- `models/trash_detector/`: YOLO model weights and training code.
-- `tests/`: Scripts to test arm movement, model inference, and URDF loading.
+- `src/configurable_arms.py`: Main entry point. Multi-arm sim with configurable YOLO interval, render interval, and display. Saves videos to `configurable_arms_vids/`.
+- `src/single_arm.py`: Single-arm sim (simpler, one Kuka).
+- `src/simulation/`: Config, conveyor, trash bin, object loader.
+- `src/utils/`: Camera, debug GUI, PyBullet helpers, YCB loading.
+- `scripts/generate_synthetic_ycb.py`, `scripts/generate_dataset.py`: Synthetic dataset generation.
+- `models/trash_detector/`: YOLO training.
+- `tests/`: Arm movement, model inference, URDF tests.
 
-## Environment Setup
+## Setup
 
 ### Prerequisites
 
 - Python 3.8+
-- pip (Python package manager)
-- (Optional) GPU for faster YOLO inference
+- Conda (recommended) or pip
+- Optional: GPU for faster YOLO inference
 
-### Installation Steps
+### Installation
 
-1. **Clone the repository:**
+1. Clone the repo:
 
    ```bash
    git clone https://github.com/MaxX-88/Trash-Sorting-Robot-Simulation
    cd robotics-project
    ```
 
-2. **Install dependencies:**
+2. Create conda env from `environment.yml`:
 
    ```bash
-   pip install -r requirements.txt
+   conda env create -f environment.yml
+   conda activate kuka
    ```
 
-3. **Recommendations:**
-- Use miniconda/anaconda for managing dependencies
-- Install pybullet with conda-forge if normal installation fails
-
+   Or with pip: `pip install -r requirements.txt` (if you keep it for pip-only setups).
 
 ## Usage
 
-### Run the Main Simulation
+### Run multi-arm simulation (recommended)
 
 ```bash
-python src/main.py
+python src/configurable_arms.py
 ```
 
-- This launches the PyBullet simulation, loads the robot, conveyor, and objects, and starts the vision-based pick-and-place loop.
+Options:
 
-### Generate Synthetic Dataset
+- `--num-arms N` – Number of arms (default: 3)
+- `--no-video` – Disable video capture
+- `--yolo-interval N` – Run YOLO every N frames (default: 5)
+- `--no-display` – No cv2 windows (faster)
+- `--render-interval N` – Render cameras every N frames (default: 1)
+
+Example: 5 arms, no display, YOLO every 10 frames:
+
+```bash
+python src/configurable_arms_fast.py --num-arms 5 --no-display --yolo-interval 10
+```
+
+### Run single-arm simulation
+
+```bash
+python src/single_arm.py
+```
+
+### Generate synthetic dataset
 
 ```bash
 python scripts/generate_dataset.py
 ```
 
-- Generates labeled images and YOLO-format labels using random YCB objects.
-
 ## Customization
 
-- **Add new URDFs**: Place them in `assets/urdf/ycb/` or `assets/urdf/ycb_variants/`.
-- **Change simulation parameters**: Edit `SimConfig` in `src/simulation/config.py` to adjust object spawn intervals, recycling/trash class lists, pitch adjustment, and more.
-- **Train your own model**: Use the synthetic dataset and Ultralytics YOLO.
+- **URDFs**: Add to `assets/urdf/ycb/` or `assets/urdf/ycb_variants/`.
+- **Simulation**: Edit `SimConfig` in `src/simulation/config.py` (spawn intervals, trash/recycling classes, pitch adjust, etc.).
+- **Model**: Train with synthetic data and Ultralytics YOLO.
 
 ## Acknowledgements
 

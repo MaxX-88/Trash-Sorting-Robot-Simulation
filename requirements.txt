@@ -1,3 +1,4 @@
+#deprecated, use environment.yml instead
 pybullet
 pybullet_data
 opencv-python-headless

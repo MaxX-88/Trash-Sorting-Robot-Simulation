@@ -14,13 +14,13 @@ for urdf_file in os.listdir(URDF_DIR):
         tree = ET.parse(os.path.join(URDF_DIR, urdf_file))
         root = tree.getroot()
         for i in range(5):  # 5 variants per object
-            # CHANGE COLOR
+            # changes color
             for mat in root.iter('material'):
                 color = random_color()
                 for el in mat:
                     if el.tag == 'color':
                         el.set('rgba', ' '.join(map(str, color)))
-            # CHANGE SCALE and UPDATE MESH PATH
+            # changes scale and mesh
             for mesh in root.iter('mesh'):
                 # Get the original scale (default to 1 1 1 if not present)
                 orig_scale = mesh.get('scale')
@@ -28,12 +28,12 @@ for urdf_file in os.listdir(URDF_DIR):
                     orig_scale = [float(x) for x in orig_scale.split()]
                 else:
                     orig_scale = [1.0, 1.0, 1.0]
-                # RANDOME SCALE CHANGE MULT HERE
+                # random scale change multiplier
                 scale = [str(orig_scale[i] * random.uniform(0.95, 1.05)) for i in range(3)]
                 mesh.set('scale', ' '.join(scale))
                 fname = mesh.get('filename')
                 if fname and not fname.startswith('ycb/'):
                     mesh.set('filename', f'ycb/{fname}')
-            # Save new URDF
+            # Save urdf
             new_name = urdf_file.replace('.urdf', f'_var{i}.urdf')
             tree.write(os.path.join(VARIANT_DIR, new_name))
